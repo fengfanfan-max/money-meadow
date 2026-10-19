@@ -3,7 +3,8 @@
 **Two mini-games and one calculator that teach children how money works.**
 Tablet-first, keyboard playable, screen-reader playable, and built so that nothing a child does leaves the device.
 
-**Live, playable on a tablet: <https://money-meadow.vercel.app>**
+**Live, playable on a tablet:** <https://money-meadow.vercel.app>  
+**Source:** <https://github.com/fengfanfan-max/money-meadow>
 
 <p align="center">
   <img src="docs/screenshots/01-home.jpg" alt="Money Meadow home screen: the Penny the piggy-bank mascot, and three game cards" width="720" />
