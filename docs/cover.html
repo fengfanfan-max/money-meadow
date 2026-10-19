@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Money Meadow — cover</title>
+    <style>
+      /* Rendered once to docs/screenshots/00-cover.jpg at 1200x675.
+         Built from the app's own palette and fonts so the cover and the
+         screenshots underneath it have no colour seam when they sit together
+         in a portfolio grid. */
+      @font-face {
+        font-family: 'Fredoka';
+        font-weight: 400 700;
+        src: url('../src/assets/fonts/fredoka-latin.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Nunito';
+        font-weight: 400 900;
+        src: url('../src/assets/fonts/nunito-latin.woff2') format('woff2');
+      }
+
+      * { box-sizing: border-box; margin: 0; }
+
+      body {
+        width: 1200px;
+        height: 675px;
+        overflow: hidden;
+        background-color: #fff8ec;
+        background-image: radial-gradient(circle at 1px 1px, rgb(42 33 64 / 0.08) 1.5px, transparent 0);
+        background-size: 22px 22px;
+        color: #2a2140;
+        font-family: 'Nunito', system-ui, sans-serif;
+        display: grid;
+        grid-template-columns: 1fr 620px;
+        align-items: center;
+        gap: 28px;
+        padding: 44px 0 44px 52px;
+      }
+
+      .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+      .brand svg { width: 46px; height: 46px; }
+      .brand span { font-family: 'Fredoka'; font-size: 25px; font-weight: 600; }
+
+      h1 {
+        font-family: 'Fredoka';
+        font-size: 52px;
+        font-weight: 600;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        margin-bottom: 14px;
+      }
+
+      .lede {
+        font-size: 19px;
+        font-weight: 600;
+        color: #5c5470;
+        line-height: 1.45;
+        max-width: 27ch;
+        margin-bottom: 26px;
+      }
+
+      ul { list-style: none; padding: 0; display: grid; gap: 12px; margin-bottom: 30px; }
+      li { display: flex; align-items: center; gap: 12px; }
+      .chip {
+        flex: none;
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        border: 3px solid #2a2140;
+        border-radius: 13px;
+        font-family: 'Fredoka';
+        font-size: 19px;
+        font-weight: 700;
+      }
+      .chip--coral { background: #ffe4dc; }
+      .chip--mint { background: #dcf5e7; }
+      .chip--grape { background: #eadfff; }
+      li b { font-family: 'Fredoka'; font-weight: 600; font-size: 18px; }
+      li em { font-style: normal; color: #5c5470; font-size: 16px; font-weight: 600; }
+
+      .facts { display: flex; gap: 9px; flex-wrap: wrap; }
+      .fact {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 14px;
+        border: 3px solid #2a2140;
+        border-radius: 999px;
+        background: #fff;
+        box-shadow: 3px 3px 0 rgb(42 33 64 / 0.16);
+        font-size: 15px;
+        font-weight: 800;
+      }
+      .fact--good { background: #dcf5e7; }
+      .dot { width: 9px; height: 9px; border-radius: 50%; background: #1b7f45; }
+
+      .device {
+        position: relative;
+        align-self: stretch;
+        display: grid;
+        place-items: center;
+      }
+      .device img {
+        width: 560px;
+        display: block;
+        border: 4px solid #2a2140;
+        border-radius: 22px;
+        box-shadow: 12px 12px 0 rgb(42 33 64 / 0.2);
+        background: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div class="brand">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <circle cx="32" cy="32" r="29" fill="#FF6B4A" stroke="#2A2140" stroke-width="3" />
+          <path d="M 13 16 C 10 4 20 1 26 10 Z" fill="#FFE4DC" stroke="#2A2140" stroke-width="3" stroke-linejoin="round" />
+          <path d="M 51 16 C 54 4 44 1 38 10 Z" fill="#FFE4DC" stroke="#2A2140" stroke-width="3" stroke-linejoin="round" />
+          <circle cx="24" cy="28" r="3.4" fill="#2A2140" />
+          <circle cx="41" cy="28" r="3.4" fill="#2A2140" />
+          <ellipse cx="32" cy="43" rx="13" ry="10" fill="#FFE4DC" stroke="#2A2140" stroke-width="3" />
+          <ellipse cx="28" cy="43" rx="2" ry="2.6" fill="#2A2140" />
+          <ellipse cx="36" cy="43" rx="2" ry="2.6" fill="#2A2140" />
+        </svg>
+        <span>Money Meadow</span>
+      </div>
+
+      <h1>Money skills,<br />played.</h1>
+
+      <p class="lede">
+        Two mini-games and a savings calculator for children aged 6–9. Tablet-first, keyboard and
+        screen-reader playable, and nothing a child does leaves the device.
+      </p>
+
+      <ul>
+        <li>
+          <span class="chip chip--coral">25¢</span>
+          <span><b>Coin Catch</b> <em>— exact change, and the fewest coins</em></span>
+        </li>
+        <li>
+          <span class="chip chip--mint">✓</span>
+          <span><b>Need or Want?</b> <em>— sorting, with a question to talk about</em></span>
+        </li>
+        <li>
+          <span class="chip chip--grape">14w</span>
+          <span><b>Save Up!</b> <em>— a goal turned into a weekly plan</em></span>
+        </li>
+      </ul>
+
+      <div class="facts">
+        <span class="fact fact--good"><span class="dot"></span>97 tests passing</span>
+        <span class="fact">37 colour pairs measured</span>
+        <span class="fact">0 axe violations · 7 screens</span>
+        <span class="fact">0 requests after load</span>
+      </div>
+    </div>
+
+    <div class="device">
+      <img src="./screenshots/01-home.jpg" alt="" />
+    </div>
+  </body>
+</html>

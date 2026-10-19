@@ -1,0 +1,201 @@
+/* =============================================================================
+   Base layer — reset, document chrome, focus, and the accessibility primitives
+   that the rest of the app leans on.
+   ============================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* The app is a series of pages, not a scroll-jacking experience. Smooth
+     scrolling is not applied globally because it is a motion effect; it is opted
+     into only for the in-page skip link, which is not the same thing. */
+}
+
+body {
+  min-height: 100dvh;
+  background-color: var(--bg);
+  /* A gentle dot grid. It gives the paper some texture without competing with the
+     illustrations, and it is drawn in CSS so it costs no request. */
+  background-image: radial-gradient(circle at 1px 1px, rgb(42 33 64 / 0.07) 1.5px, transparent 0);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  font-weight: 600;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* --- Focus -----------------------------------------------------------------
+   One focus treatment for the entire app, on :focus-visible so a mouse click
+   does not draw a ring but a keyboard press always does. The colour is ink,
+   which clears 3:1 against every surface and every accent in the palette
+   (measured in scripts/check-contrast.mjs), so there is no combination of
+   background and control where the indicator can disappear.
+   ------------------------------------------------------------------------- */
+:focus-visible {
+  outline: var(--focus-width) solid var(--focus);
+  outline-offset: var(--focus-offset);
+  border-radius: var(--radius-sm);
+}
+
+/* If a component draws its own ring it still uses the same token, never none. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* --- Skip link -------------------------------------------------------------
+   Off-screen until focused. It is the first focusable thing in the document so
+   that keyboard and switch users are not forced through the header on every
+   screen change.
+   ------------------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 100;
+  transform: translateY(-200%);
+  padding: var(--space-3) var(--space-5);
+  border: var(--line) solid var(--line-color);
+  border-radius: var(--radius-pill);
+  background: var(--sun);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* --- Visually hidden -------------------------------------------------------
+   Used for the live regions and for icon-only labels. Clipped rather than
+   display:none, because a display:none live region is never announced.
+   ------------------------------------------------------------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Reduced motion --------------------------------------------------------
+   Two triggers, and the ordering matters.
+
+   The media query is scoped to `html:not([data-reduce-motion])` so that it acts
+   as the *pre-JavaScript* default. Once the app has mounted it always sets the
+   attribute to either "true" or "false", and that explicit value wins — which is
+   what lets a user who deliberately chooses "full motion" in the grown-ups panel
+   override an operating-system setting, and lets everyone else inherit it.
+
+   Without the :not() guard the media query would keep winning and the in-app
+   switch could only ever turn motion off, never on.
+   ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-reduce-motion]) *,
+  html:not([data-reduce-motion]) *::before,
+  html:not([data-reduce-motion]) *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+html[data-reduce-motion='true'] *,
+html[data-reduce-motion='true'] *::before,
+html[data-reduce-motion='true'] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* --- Higher contrast request ----------------------------------------------
+   A user who has asked the OS for more contrast gets ink outlines on things that
+   are otherwise distinguished by fill alone, and a heavier focus ring.
+   ------------------------------------------------------------------------- */
+@media (prefers-contrast: more) {
+  :root {
+    --line: 4px;
+    --focus-width: 4px;
+  }
+
+  body {
+    background-image: none;
+  }
+
+  .sticker,
+  .coin,
+  .bin,
+  .game-card {
+    outline: 2px solid var(--ink);
+    outline-offset: -2px;
+  }
+}
+
+/* --- Forced colours --------------------------------------------------------
+   In Windows High Contrast the system replaces the palette. The one thing that
+   needs guarding is the hard offset shadow, which becomes a solid block, so it
+   is replaced with a border instead.
+   ------------------------------------------------------------------------- */
+@media (forced-colors: active) {
+  .sticker,
+  .game-card,
+  .bin,
+  .coin,
+  .topbar {
+    box-shadow: none;
+    border: 2px solid CanvasText;
+  }
+
+  .tray-slot {
+    border-color: CanvasText;
+  }
+}

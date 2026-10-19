@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Money Meadow">
+  <rect width="64" height="64" rx="14" fill="#FFF8EC"/>
+  <circle cx="32" cy="34" r="21" fill="#FF6B4A" stroke="#2A2140" stroke-width="3"/>
+  <path d="M 15 20 C 12 8 22 5 28 14 Z" fill="#FFE4DC" stroke="#2A2140" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M 49 20 C 52 8 42 5 36 14 Z" fill="#FFE4DC" stroke="#2A2140" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="25" cy="30" r="2.8" fill="#2A2140"/>
+  <circle cx="39" cy="30" r="2.8" fill="#2A2140"/>
+  <ellipse cx="32" cy="43" rx="11" ry="8" fill="#FFE4DC" stroke="#2A2140" stroke-width="3"/>
+  <ellipse cx="28" cy="43" rx="1.8" ry="2.4" fill="#2A2140"/>
+  <ellipse cx="36" cy="43" rx="1.8" ry="2.4" fill="#2A2140"/>
+</svg>

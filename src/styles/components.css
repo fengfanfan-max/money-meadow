@@ -1,0 +1,790 @@
+/* =============================================================================
+   Components — the sticker vocabulary.
+   ============================================================================= */
+
+/* --- Sticker surface -------------------------------------------------------
+   The card used everywhere. Thick ink outline plus a hard offset shadow: no
+   blur, no gradient, so every edge is a high-contrast boundary and the whole
+   thing reads as a printed sticker rather than a floating panel.
+
+   `position: relative` is load-bearing, not cosmetic: every celebration overlay
+   (confetti, coin burst, stamps) is absolutely positioned inside a sticker, and
+   without a positioned ancestor they resolve against the initial containing
+   block instead — which puts the confetti in the top-left of the document rather
+   than inside the card.
+   ------------------------------------------------------------------------- */
+.sticker {
+  position: relative;
+  background: var(--surface);
+  border: var(--line) solid var(--line-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.sticker--tint {
+  background: var(--tint-sun);
+}
+
+/* --- Buttons --------------------------------------------------------------- */
+.btn {
+  --btn-bg: var(--coral);
+  --btn-fg: var(--ink);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-min);
+  padding: var(--space-3) var(--space-5);
+  border: var(--line) solid var(--line-color);
+  border-radius: var(--radius-pill);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 600;
+  line-height: 1.1;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--dur-fast) var(--ease-bounce),
+    box-shadow var(--dur-fast) ease;
+  /* Buttons on a touch screen should not wait 300ms to see if it was a double
+     tap; the games are tap-driven so this matters. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 rgb(42 33 64 / 0.18);
+}
+
+.btn:active:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: var(--shadow-press);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  box-shadow: var(--shadow-press);
+  transform: translate(2px, 2px);
+}
+
+.btn--lg {
+  min-height: var(--tap-primary);
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--text-lg);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+/* Variants. Only the two "deep" accents may carry white text — the palette
+   audit pins white-on-sky at 4.01:1 and white-on-mint at 3.18:1, so neither is
+   allowed to be a label background. */
+.btn--sun {
+  --btn-bg: var(--sun);
+}
+
+.btn--mint {
+  --btn-bg: var(--mint);
+}
+
+.btn--grape {
+  --btn-bg: var(--grape);
+  --btn-fg: #fff;
+}
+
+.btn--ghost {
+  --btn-bg: var(--surface);
+}
+
+/* A flat button for secondary actions: same tap target, no shadow, so it does
+   not compete with the thing the child is meant to press. */
+.btn--plain {
+  --btn-bg: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  min-height: var(--tap-min);
+}
+
+.btn--plain:hover:not(:disabled) {
+  transform: none;
+  box-shadow: none;
+  background: var(--tint-sun);
+}
+
+/* --- Penny, the piggy-bank mascot -----------------------------------------
+   Hand-authored SVG. The animations are CSS keyframes on named groups inside the
+   SVG rather than SMIL or a canvas loop, which keeps her in the DOM, keeps her
+   cheap, and lets the global reduced-motion rule switch all of it off at once.
+   ------------------------------------------------------------------------- */
+.penny {
+  overflow: visible;
+}
+
+/* transform-origin on an SVG child resolves against the viewBox by default, but
+   stating it explicitly keeps the blink geometry from shifting if a browser
+   changes the initial value of transform-box. */
+.penny__root,
+.penny__head,
+.penny__tail,
+.penny__ear,
+.penny__lid {
+  transform-box: view-box;
+}
+
+.penny__body {
+  fill: var(--coral);
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.penny__snout,
+.penny__ear {
+  fill: var(--tint-coral);
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+/* Legs share the body colour. In a pale tint they read as four detached shapes
+   that happen to sit underneath the pig rather than as part of the pig. */
+.penny__leg {
+  fill: var(--coral);
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.penny__eye {
+  fill: var(--ink);
+}
+
+.penny__cheek {
+  fill: var(--coral);
+  opacity: 0.55;
+}
+
+.penny__slot {
+  fill: var(--ink);
+}
+
+.penny__tail {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.penny__shine {
+  fill: #fff;
+  opacity: 0.26;
+}
+
+/* The eyelids are a circle matching the body colour, scaled flat against the eye
+   centre. Zero-height rather than transparent means the resting state costs no
+   compositing, and the blink is a single transform. Origins must match
+   GEOMETRY in src/components/Penny.tsx. */
+.penny__lid {
+  fill: var(--coral);
+}
+
+.penny__lid--left {
+  transform-origin: 126px 74px;
+  animation: penny-blink 5.2s infinite;
+}
+
+.penny__lid--right {
+  transform-origin: 156px 74px;
+  animation: penny-blink 5.2s infinite;
+}
+
+@keyframes penny-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(0);
+  }
+  94%,
+  96% {
+    transform: scaleY(1);
+  }
+}
+
+.penny__tail {
+  transform-origin: 34px 94px;
+  animation: penny-tail 2.4s var(--ease-out) infinite;
+}
+
+@keyframes penny-tail {
+  0%,
+  100% {
+    transform: rotate(-6deg);
+  }
+  50% {
+    transform: rotate(8deg);
+  }
+}
+
+.penny__ear--left {
+  transform-origin: 60px 40px;
+  animation: penny-ear-l 3.6s ease-in-out infinite;
+}
+
+.penny__ear--right {
+  transform-origin: 140px 40px;
+  animation: penny-ear-r 3.6s ease-in-out infinite;
+}
+
+@keyframes penny-ear-l {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-9deg);
+  }
+}
+
+@keyframes penny-ear-r {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(9deg);
+  }
+}
+
+.penny--idle .penny__root {
+  animation: penny-breathe 3.4s ease-in-out infinite;
+  transform-origin: 110px 150px;
+}
+
+@keyframes penny-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.012);
+  }
+}
+
+.penny--happy .penny__root,
+.penny--cheer .penny__root {
+  animation: penny-hop 620ms var(--ease-bounce) 2;
+  transform-origin: 110px 150px;
+}
+
+@keyframes penny-hop {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  35% {
+    transform: translateY(-18px) rotate(-4deg);
+  }
+  70% {
+    transform: translateY(0) rotate(2deg);
+  }
+}
+
+.penny--thinking .penny__head {
+  animation: penny-tilt 2.2s ease-in-out infinite;
+  transform-origin: 110px 90px;
+}
+
+@keyframes penny-tilt {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-7deg);
+  }
+}
+
+/* --- Brand mark ------------------------------------------------------------ */
+.mark__face {
+  fill: var(--coral);
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+
+.mark__ear {
+  fill: var(--tint-coral);
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.mark__eye,
+.mark__nostril {
+  fill: var(--ink);
+}
+
+.mark__snout {
+  fill: var(--tint-coral);
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+
+/* --- Illustration set -------------------------------------------------------
+   One treatment for eighteen drawings: a 3px ink outline plus a flat fill. A
+   shape opts into the outline with `ill`, then into a fill with one of the
+   variants. `ill--line` is the stroke-only form used for detail.
+   ------------------------------------------------------------------------- */
+.ill {
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.ill--paper {
+  fill: var(--surface);
+}
+
+.ill--sun {
+  fill: var(--sun);
+}
+
+.ill--coral {
+  fill: var(--tint-coral);
+}
+
+.ill--mint {
+  fill: var(--tint-mint);
+}
+
+.ill--sky {
+  fill: var(--tint-sky);
+}
+
+.ill--grape {
+  fill: var(--tint-grape);
+}
+
+.ill--ink {
+  fill: var(--ink);
+  stroke: none;
+}
+
+/* Stroke only, no fill — for creases, strings and other detail lines. */
+.ill--line {
+  fill: none;
+}
+
+/* --- Coins -----------------------------------------------------------------
+   Four denominations. They differ in size, colour and numeral — never in colour
+   alone — so the set survives both a greyscale print and every form of colour
+   vision deficiency.
+   ------------------------------------------------------------------------- */
+.coin {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: var(--line) solid var(--ink);
+  border-radius: 50%;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--dur-fast) var(--ease-bounce),
+    box-shadow var(--dur-fast) ease;
+}
+
+.coin::after {
+  /* Specular highlight, purely decorative. */
+  content: '';
+  position: absolute;
+  inset: 12% 46% 58% 16%;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.55);
+  pointer-events: none;
+}
+
+.coin--1 {
+  width: 72px;
+  background: #f0b08a;
+  font-size: var(--text-lg);
+}
+
+.coin--5 {
+  width: 86px;
+  background: #d7dbe3;
+  font-size: var(--text-xl);
+}
+
+.coin--10 {
+  width: 90px;
+  background: #c8cee0;
+  font-size: var(--text-xl);
+}
+
+.coin--25 {
+  width: 108px;
+  background: #efd9a0;
+  font-size: var(--text-2xl);
+}
+
+/* The coin as a pressable control rather than a glyph. */
+.coin-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  border-radius: 50%;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.coin-btn .coin {
+  transition:
+    transform var(--dur-fast) var(--ease-bounce),
+    box-shadow var(--dur-fast) ease;
+}
+
+.coin-btn:hover .coin {
+  transform: translate(-2px, -2px) rotate(-4deg);
+  box-shadow: 5px 5px 0 rgb(42 33 64 / 0.2);
+}
+
+.coin-btn:active .coin {
+  transform: translate(2px, 2px) scale(0.94);
+  box-shadow: var(--shadow-press);
+}
+
+.coin-btn:disabled .coin {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* A refused coin — the child aimed too high. Shaking is a motion effect that the
+   reduced-motion rule removes, so the refusal is also stated in words and in an
+   assertive live region. Never motion alone. */
+.coin--refused {
+  animation: coin-shake 380ms ease-in-out;
+}
+
+@keyframes coin-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-7px) rotate(-5deg);
+  }
+  45% {
+    transform: translateX(7px) rotate(5deg);
+  }
+  70% {
+    transform: translateX(-4px) rotate(-3deg);
+  }
+}
+
+/* --- The tray: coins the child has already paid --------------------------- */
+.tray {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 96px;
+  padding: var(--space-3);
+  border: var(--line) dashed rgb(42 33 64 / 0.35);
+  border-radius: var(--radius);
+  background: rgb(255 255 255 / 0.6);
+}
+
+.tray--empty {
+  justify-content: center;
+}
+
+.tray__hint {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.tray .coin {
+  width: 46px;
+  font-size: var(--text-xs);
+}
+
+/* --- Star rating ----------------------------------------------------------- */
+.stars {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.stars__star {
+  width: 22px;
+  height: 22px;
+}
+
+.stars__star--on {
+  fill: var(--sun);
+  stroke: var(--ink);
+  stroke-width: 1.6;
+}
+
+.stars__star--off {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  opacity: 0.3;
+}
+
+/* --- Confetti -------------------------------------------------------------- */
+.confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confetti__piece {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 14px;
+  border-radius: 3px;
+  animation: confetti-fall var(--fall-duration, 2200ms) linear forwards;
+  animation-delay: var(--fall-delay, 0ms);
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(560px) translateX(var(--drift, 0px)) rotate(var(--spin-end, 540deg));
+    opacity: 0;
+  }
+}
+
+/* --- Coin burst ------------------------------------------------------------
+   The payoff for clearing a level: the coins the child just spent fly up out of
+   the tray and fade. The pieces fan upward only, so the shape reads as coins
+   leaving a hand rather than as a firework.
+
+   Every piece sits at `opacity: 0` in its resting state and only becomes visible
+   inside the animation. That means if motion is ever flattened — a reduced-motion
+   preference, a background tab, a browser that drops the animation — the pieces
+   are simply invisible instead of frozen mid-flight as a ring of stray circles.
+   ------------------------------------------------------------------------- */
+.coin-burst {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.coin-burst__piece {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--piece-size, 28px);
+  height: var(--piece-size, 28px);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--piece-bg, var(--sun));
+  opacity: 0;
+  animation: coin-burst-fly var(--fly-duration, 900ms) var(--ease-out) var(--fly-delay, 0ms)
+    forwards;
+}
+
+/* The same specular highlight the resting coins carry, so a flying piece still
+   reads as a coin rather than as a dot. */
+.coin-burst__piece::after {
+  content: '';
+  position: absolute;
+  inset: 20% 56% 62% 22%;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.55);
+}
+
+@keyframes coin-burst-fly {
+  0% {
+    transform: translate(-50%, -50%) scale(0.35) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  /* Held solid for most of the flight, then a quick fade at the end. Fading
+     linearly from the start made the coins read as bubbles rising rather than
+     as coins being thrown. */
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--fly-x, 0px)), calc(-50% + var(--fly-y, -120px)))
+      scale(0.6) rotate(var(--fly-r, 200deg));
+    opacity: 0;
+  }
+}
+
+/* --- Stamp -----------------------------------------------------------------
+   A sticker that lands on the thing it is marking. The overshoot at 55% is what
+   makes it feel pressed on rather than faded in; the final keyframe holds the
+   resting rotation so the stamp stays slightly off-square, like a real one.
+   ------------------------------------------------------------------------- */
+.stamp {
+  position: absolute;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 13px;
+  border: 4px solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: var(--sun);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  pointer-events: none;
+  transform-origin: center;
+  animation: stamp-in 560ms var(--ease-bounce) both;
+}
+
+@keyframes stamp-in {
+  0% {
+    transform: rotate(-20deg) scale(0.15);
+    opacity: 0;
+  }
+  55% {
+    transform: rotate(-7deg) scale(1.18);
+    opacity: 1;
+  }
+  78% {
+    transform: rotate(-10deg) scale(0.94);
+  }
+  100% {
+    transform: rotate(-9deg) scale(1);
+    opacity: 1;
+  }
+}
+
+/* --- Celebration ticks -----------------------------------------------------
+   Two small accents reused by more than one game. Both are pure transform, so
+   they cost nothing to composite and disappear cleanly under reduced motion —
+   the state they accompany is always visible in text as well.
+   ------------------------------------------------------------------------- */
+.pop {
+  animation: pop-bounce 520ms var(--ease-bounce);
+}
+
+/* An icon sitting inline at the head of a heading, sized in em so it tracks the
+   type around it. Ink rather than accent: on white, --sun measures only 1.54:1. */
+.celebration-mark {
+  display: inline-grid;
+  place-items: center;
+  margin-inline-end: 0.32em;
+  font-size: 0.82em;
+  vertical-align: -0.12em;
+  color: var(--ink);
+}
+
+@keyframes pop-bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.16);
+  }
+}
+
+.flash-mint {
+  animation: flash-mint 900ms ease-out;
+}
+
+@keyframes flash-mint {
+  0% {
+    background: var(--mint);
+  }
+  100% {
+    background: var(--tint-mint);
+  }
+}
+
+/* --- Feedback banner ------------------------------------------------------- */
+.feedback {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border: var(--line) solid var(--ink);
+  border-radius: var(--radius);
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.feedback--good {
+  background: var(--tint-mint);
+}
+
+.feedback--oops {
+  background: var(--tint-coral);
+}
+
+.feedback--info {
+  background: var(--tint-sky);
+}
+
+/* Icon slots in banners and headings. Sized in em so they track the surrounding
+   type, and given a colour so an icon never falls back to the inherited ink when
+   the banner already has enough of it. */
+.feedback__mark,
+.explanation__mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+/* --- Meter -----------------------------------------------------------------
+   A plain progress bar. The fill is --grape because it is the one accent that
+   clears 3:1 unaided against both the card and its own track; every other accent
+   would need an ink outline, which looks wrong on a 12px bar.
+   ------------------------------------------------------------------------- */
+.meter {
+  height: 20px;
+  border: var(--line) solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: var(--tint-grape);
+  overflow: hidden;
+}
+
+.meter__fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--grape);
+  transition: width var(--dur-slow) var(--ease-out);
+}
+
+.meter__fill--full {
+  background: var(--mint-deep);
+}

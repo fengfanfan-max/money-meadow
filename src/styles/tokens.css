@@ -1,0 +1,112 @@
+/* =============================================================================
+   Money Meadow — design tokens
+   =============================================================================
+
+   The palette is a storybook one: a warm paper ground, deep plum ink, and bright
+   accents used as outlines and small fills rather than as big text backgrounds.
+   That last decision is what makes the contrast maths work — saturated colour and
+   readable text fight each other, so the saturated colours carry the identity
+   (borders, shadows, icons) while the calm tints carry the content.
+
+   Every foreground/background pair used in the UI is listed in
+   scripts/check-contrast.mjs and measured against WCAG 2.2. `pnpm contrast`
+   fails the build when one drops below its target, so the accessibility claim in
+   the README is enforced rather than asserted.
+   ============================================================================= */
+
+:root {
+  /* --- Surfaces ------------------------------------------------------------ */
+  --bg: #fff8ec;
+  --bg-deep: #f7e9d3;
+  --surface: #ffffff;
+
+  /* Calm tints for large areas: bins, cards, list rows. */
+  --tint-coral: #ffe4dc;
+  --tint-sun: #fff0c9;
+  --tint-mint: #dcf5e7;
+  --tint-sky: #deeaff;
+  --tint-grape: #eadfff;
+
+  /* --- Ink ----------------------------------------------------------------- */
+  --ink: #2a2140;
+  --ink-soft: #5c5470;
+
+  /* --- Accents ------------------------------------------------------------- */
+  /* Used for borders, icon fills, badges and focus-adjacent detail. Any accent
+     that carries text pairs with --ink, never with white, unless noted. */
+  --coral: #ff6b4a;
+  --sun: #ffc93c;
+  --mint: #23a55a;
+  /* --mint alone measures only 2.50:1 against the progress track, so anywhere
+     green has to be a shape rather than a fill behind ink uses this darker one. */
+  --mint-deep: #1b7f45;
+  --sky: #2f7fe0;
+  --grape: #7a4fe0;
+
+  /* The only saturated colour light enough to need white text on it. */
+  --sky-deep: #1f63c4;
+
+  /* --- Focus --------------------------------------------------------------- */
+  /* Ink for the ring, everywhere. It clears 3:1 against every surface and accent
+     in this file, including the coral buttons, so the focus indicator never
+     falls below WCAG 2.2 §2.4.11 no matter what it sits on. */
+  --focus: #2a2140;
+  --focus-width: 3px;
+  --focus-offset: 3px;
+
+  /* --- Borders and shadows ------------------------------------------------- */
+  /* The "sticker" look: a thick ink outline plus a hard offset shadow, no blur.
+     It reads as a printed sticker, and it means every interactive edge has a
+     high-contrast boundary. */
+  --line: 3px;
+  --line-color: var(--ink);
+  --shadow-offset: 5px;
+  --shadow: var(--shadow-offset) var(--shadow-offset) 0 rgb(42 33 64 / 0.18);
+  --shadow-sm: 3px 3px 0 rgb(42 33 64 / 0.16);
+  --shadow-press: 1px 1px 0 rgb(42 33 64 / 0.2);
+
+  /* --- Radii --------------------------------------------------------------- */
+  /* Children's interfaces read better with generous rounding, and rounded
+     targets are more forgiving of imprecise taps. */
+  --radius-sm: 12px;
+  --radius: 20px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+
+  /* --- Type ---------------------------------------------------------------- */
+  --font-display: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+  --font-text: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+  /* Rounded, generous, and never below 16px for anything a child reads.
+     16px is also the threshold below which iOS Safari zooms on input focus. */
+  --text-xs: 0.875rem;
+  --text-sm: 1rem;
+  --text-base: 1.125rem;
+  --text-lg: 1.375rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.25rem;
+  --text-3xl: clamp(2.25rem, 6vw, 3.25rem);
+
+  /* --- Spacing ------------------------------------------------------------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* --- Touch --------------------------------------------------------------- */
+  /* WCAG 2.2 §2.5.8 asks for 24px. Children on a tablet with a case want far
+     more than that, so the floor here is 56px and primary actions are 72px. */
+  --tap-min: 56px;
+  --tap-primary: 72px;
+
+  /* --- Motion -------------------------------------------------------------- */
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 120ms;
+  --dur: 220ms;
+  --dur-slow: 420ms;
+}

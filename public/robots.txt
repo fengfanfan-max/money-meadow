@@ -1,0 +1,4 @@
+# Money Meadow is a children's app. It is not a public site and there is nothing
+# here to index, so the polite default is to ask crawlers to stay out entirely.
+User-agent: *
+Disallow: /

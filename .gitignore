@@ -1,0 +1,19 @@
+node_modules/
+dist/
+
+# Throwaway build used by scripts/audit-a11y.mjs. Regenerated on demand; axe-core
+# must never be part of the shipped bundle.
+.audit/
+
+# Vercel's local project link — machine state, not source.
+.vercel/
+
+# Internal pitch material. The public repo is the product; the cover letter, the
+# portfolio copy and the progress reports are how this gets sold, and they belong
+# beside the project rather than inside it.
+docs/Upwork-*.md
+docs/阶段汇报邮件*.md
+
+# OS noise
+.DS_Store
+*.local

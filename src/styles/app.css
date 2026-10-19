@@ -1,0 +1,712 @@
+/* =============================================================================
+   App shell, home screen and the grown-ups panel.
+   ============================================================================= */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* --- Top bar --------------------------------------------------------------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) clamp(var(--space-4), 4vw, var(--space-6));
+  background: var(--bg);
+  border-bottom: var(--line) solid var(--ink);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.brand__mark {
+  flex: none;
+  width: 46px;
+  height: 46px;
+}
+
+.brand__text {
+  display: grid;
+  min-width: 0;
+}
+
+.brand__name {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.brand__tag {
+  color: var(--ink-soft);
+  font-size: var(--text-xs);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.topbar__actions .btn {
+  /* "For grown-ups" must never break across lines in the bar. */
+  white-space: nowrap;
+}
+
+/* The sound switch shows its state in both the icon and a word, not by colour. */
+.sound-toggle {
+  min-width: var(--tap-min);
+}
+
+/*
+  Narrow screens.
+  ===============
+  The label is hidden with the sr-only recipe rather than `display: none`.
+
+  `display: none` removes an element from the accessible name computation as well
+  as from the page, so hiding the word "Sound" that way left the button named
+  only by its state text — a screen reader announced "off, button, not pressed",
+  with no clue what was being turned on. Clipping it to a pixel instead keeps the
+  name intact ("Sound off, switch button") while freeing the space.
+*/
+@media (max-width: 640px) {
+  .brand__tag {
+    /* Purely a tagline; the app name carries the identity on its own. */
+    display: none;
+  }
+
+  .sound-toggle__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* The bar has three things in it and a phone has very little room. Trim the
+   padding, the mark and the type rather than letting anything wrap or clip. */
+@media (max-width: 560px) {
+  .topbar {
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-2);
+  }
+
+  .brand {
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .brand__mark {
+    width: 38px;
+    height: 38px;
+  }
+
+  .brand__name {
+    font-size: var(--text-base);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .topbar__actions {
+    gap: var(--space-1);
+  }
+
+  .topbar__actions .btn {
+    min-height: 46px;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .hero {
+    padding-bottom: var(--space-5);
+  }
+
+  .hero__lede {
+    font-size: var(--text-base);
+  }
+}
+
+/*
+  Smallest phones.
+
+  The name is clipped rather than truncated. An ellipsis mid-word ("Money
+  Mead…") reads as a rendering fault, and the hero heading immediately below
+  already says the name at 2.25rem, so the bar only needs the mark. Clipping
+  keeps the name in the accessibility tree, so nothing is lost to a screen
+  reader.
+*/
+@media (max-width: 460px) {
+  .brand__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* --- Screen container ------------------------------------------------------ */
+.shell {
+  flex: 1;
+  width: min(1080px, 100% - 2 * var(--space-4));
+  margin-inline: auto;
+  padding-block: clamp(var(--space-5), 4vw, var(--space-7));
+}
+
+/* --- Hero ------------------------------------------------------------------ */
+.hero {
+  display: grid;
+  gap: var(--space-5);
+  justify-items: center;
+  text-align: center;
+  padding-bottom: var(--space-7);
+}
+
+.hero__mascot {
+  width: clamp(140px, 30vw, 210px);
+}
+
+.hero__copy {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: center;
+}
+
+.hero__title {
+  font-size: var(--text-3xl);
+}
+
+.hero__lede {
+  max-width: 46ch;
+  color: var(--ink-soft);
+  font-size: var(--text-lg);
+}
+
+/* Speech bubble. The tail is a rotated square, so it stays crisp at any size. */
+.bubble {
+  position: relative;
+  max-width: 32ch;
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface);
+  border: var(--line) solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+}
+
+.bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -11px;
+  width: 18px;
+  height: 18px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--surface);
+  border-right: var(--line) solid var(--ink);
+  border-bottom: var(--line) solid var(--ink);
+}
+
+@media (min-width: 800px) {
+  .hero {
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-items: start;
+    align-items: center;
+    gap: var(--space-8);
+    text-align: left;
+  }
+
+  .hero__copy {
+    justify-items: start;
+  }
+
+  .bubble::after {
+    left: -11px;
+    bottom: 42%;
+    transform: translateY(50%) rotate(135deg);
+  }
+}
+
+/* --- Game grid ------------------------------------------------------------- */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+  gap: var(--space-5);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.game-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-5);
+  border: var(--line) solid var(--ink);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform var(--dur-fast) var(--ease-bounce),
+    box-shadow var(--dur-fast) ease;
+}
+
+.game-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 rgb(42 33 64 / 0.2);
+}
+
+.game-card:active {
+  transform: translate(3px, 3px);
+  box-shadow: var(--shadow-press);
+}
+
+.game-card[data-accent='coral'] {
+  --card-accent: var(--coral);
+  --card-tint: var(--tint-coral);
+}
+
+.game-card[data-accent='mint'] {
+  --card-accent: var(--mint);
+  --card-tint: var(--tint-mint);
+}
+
+.game-card[data-accent='grape'] {
+  --card-accent: var(--grape);
+  --card-tint: var(--tint-grape);
+}
+
+.game-card__art {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  border: var(--line) solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--card-tint, var(--tint-sun));
+}
+
+/* The coin component's default sizes are tuned for a child's finger. In the card
+   badge they are scaled down to fit, rather than growing a second size variant
+   that would then have to be kept in step with the first. */
+.game-card__art .coin--25 {
+  width: 46px;
+  font-size: var(--text-xs);
+}
+
+.game-card__art .coin--10 {
+  width: 40px;
+  font-size: var(--text-xs);
+}
+
+.game-card__title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+}
+
+.game-card__blurb {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.game-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+.game-card__cta {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* The card is a single button, so its accessible name is assembled from all of
+   this text by aria-labelledby; nothing here needs to be hidden from AT. */
+
+/* --- Home: learning objectives -------------------------------------------- */
+.objectives {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+  padding: var(--space-5);
+}
+
+.objectives__title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+}
+
+.objectives__list {
+  display: grid;
+  gap: var(--space-3);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.objectives__item {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.objectives__tick {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--tint-mint);
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+@media (min-width: 700px) {
+  .objectives__list {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3) var(--space-6);
+  }
+}
+
+/* --- Footer ---------------------------------------------------------------- */
+.footer {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: center;
+  padding: var(--space-6) var(--space-4);
+  border-top: 2px dashed rgb(42 33 64 / 0.25);
+  color: var(--ink-soft);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+.footer__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: var(--tint-mint);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* Icons inherit ink from the palette and are sized in em, so they track the text
+   they sit next to. */
+.footer__badge svg {
+  font-size: 1.05rem;
+}
+
+/* --- Grown-ups panel ------------------------------------------------------ */
+/* A flex column so the header stays put and only the body scrolls. The first
+   attempt at this used `max-height: calc(90dvh - 190px)` on the body, which
+   silently overflows the moment the header's height changes — and did, clipping
+   the dialog against the viewport. `min-height: 0` on the scrolling child is
+   what actually makes a flex item shrink below its content height. */
+.grownups {
+  display: flex;
+  flex-direction: column;
+  width: min(760px, 94vw);
+  /* vh first as the fallback for engines without dvh, then dvh to get the
+     correct height on mobile where the URL bar changes the viewport. */
+  max-height: 90vh;
+  max-height: 90dvh;
+  margin: auto;
+  padding: 0;
+  border: var(--line) solid var(--ink);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.grownups::backdrop {
+  background: rgb(42 33 64 / 0.5);
+}
+
+/*
+  Restores the closed state.
+
+  The user-agent stylesheet hides a dialog that has no `open` attribute with
+  `dialog:not([open]) { display: none }`. Author styles beat user-agent styles
+  regardless of specificity, so the `display: flex` above silently overrode that
+  rule and left the dialog visible — and focusable — before it was ever opened.
+  The panel looked fine in the open state, which is exactly why this is easy to
+  ship: the bug only shows as a stray modal on first load.
+*/
+.grownups:not([open]) {
+  display: none;
+}
+
+.grownups__head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--line) solid var(--ink);
+  background: var(--tint-sun);
+}
+
+.grownups__title {
+  font-size: var(--text-xl);
+}
+
+.grownups__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  gap: var(--space-6);
+  align-content: start;
+  overflow-y: auto;
+  padding: var(--space-5);
+  /* Momentum scrolling is not a motion effect, and without it the panel feels
+     broken on iOS. */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.grownups__section {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.grownups__section h3 {
+  font-size: var(--text-lg);
+}
+
+.grownups__section p,
+.grownups__section li {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.fact-list {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.fact-list li {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.fact-list__mark {
+  flex: none;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Settings rows inside the panel. */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid rgb(42 33 64 / 0.2);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.setting-row__text {
+  display: grid;
+  gap: 2px;
+}
+
+.setting-row__label {
+  font-weight: 800;
+  font-size: var(--text-sm);
+  /* A real <label for>, so the word itself toggles the control. */
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgb(42 33 64 / 0.28);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  width: fit-content;
+}
+
+.setting-row__label:hover {
+  text-decoration-color: var(--ink);
+}
+
+.setting-row__help {
+  color: var(--ink-soft);
+  font-size: var(--text-xs);
+}
+
+/* A switch built from a real checkbox, so it is keyboard operable and announced
+   as a checkbox without any ARIA of our own. */
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.switch__track {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 66px;
+  height: 38px;
+  border: var(--line) solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: var(--bg-deep);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease-out);
+}
+
+.switch__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--surface);
+  transition: transform var(--dur) var(--ease-bounce);
+}
+
+.switch input:checked + .switch__track {
+  background: var(--mint);
+}
+
+.switch input:checked + .switch__track .switch__thumb {
+  transform: translateX(28px);
+}
+
+.switch input:focus-visible + .switch__track {
+  outline: var(--focus-width) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+
+.switch__state {
+  min-width: 3ch;
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+/* Three-way control for the motion preference. */
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  border: var(--line) solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: var(--bg-deep);
+}
+
+.segmented label {
+  position: relative;
+  cursor: pointer;
+}
+
+.segmented input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.segmented span {
+  display: block;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.segmented input:checked + span {
+  background: var(--sun);
+  border: 2px solid var(--ink);
+  padding: calc(var(--space-2) - 2px) calc(var(--space-4) - 2px);
+}
+
+.segmented input:focus-visible + span {
+  outline: var(--focus-width) solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* A button that sits inside a sentence. The default button has a 56px minimum
+   height, which is right for a control a child taps and wrong for a word in the
+   middle of a paragraph — it breaks the line and leaves a gap. WCAG 2.5.8
+   explicitly exempts targets in a sentence for this reason. */
+.btn--inline {
+  display: inline;
+  min-height: 0;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  vertical-align: baseline;
+  font-size: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.btn--inline:hover:not(:disabled) {
+  transform: none;
+  box-shadow: none;
+  background: var(--sun);
+}
+
+/* --- Danger action --------------------------------------------------------- */
+.btn--danger {
+  --btn-bg: var(--tint-coral);
+}
